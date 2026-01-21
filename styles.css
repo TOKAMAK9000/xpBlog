@@ -16,6 +16,12 @@
   user-select: none;
 }
 
+.doc-body,
+.markdown,
+.markdown * {
+  user-select: text;
+}
+
 body {
   margin: 0;
   height: 100vh;
