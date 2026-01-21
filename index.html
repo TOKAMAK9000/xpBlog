@@ -1,0 +1,113 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>XP 博客桌面</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="desktop">
+      <div class="desktop-icon" data-open="file-explorer" data-node="我的文档">
+        <div class="icon icon-folder"></div>
+        <div class="icon-label">我的文档</div>
+      </div>
+      <div class="desktop-icon" data-open="file-explorer" data-node="项目">
+        <div class="icon icon-folder"></div>
+        <div class="icon-label">项目</div>
+      </div>
+      <div class="desktop-icon" data-open="file-explorer" data-node="文章">
+        <div class="icon icon-folder"></div>
+        <div class="icon-label">文章</div>
+      </div>
+    </div>
+
+    <div class="window hidden" id="file-explorer">
+      <div class="title-bar">
+        <div class="title">资源管理器</div>
+        <div class="window-controls">
+          <button class="win-btn" data-action="minimize">_</button>
+          <button class="win-btn" data-action="maximize">[]</button>
+          <button class="win-btn" data-action="close">X</button>
+        </div>
+      </div>
+      <div class="menu-bar">
+        <span>文件</span>
+        <span>编辑</span>
+        <span>查看</span>
+        <span>收藏夹</span>
+        <span>工具</span>
+        <span>帮助</span>
+      </div>
+      <div class="toolbar">
+        <span class="tool">后退</span>
+        <span class="tool">前进</span>
+        <span class="tool" data-action="up">上一级</span>
+        <span class="tool">搜索</span>
+        <span class="tool">文件夹</span>
+      </div>
+      <div class="explorer-body">
+        <div class="pane pane-left">
+          <div class="pane-title">文件夹</div>
+          <div id="folder-tree" class="tree"></div>
+        </div>
+        <div class="pane pane-right">
+          <div class="pane-title" id="current-path">桌面</div>
+          <div id="folder-contents" class="contents"></div>
+        </div>
+      </div>
+      <div class="status-bar">
+        <span id="status-text">就绪</span>
+      </div>
+    </div>
+
+    <template id="doc-template">
+      <div class="window doc-window">
+        <div class="title-bar">
+          <div class="title doc-title">文档</div>
+          <div class="window-controls">
+            <button class="win-btn" data-action="minimize">_</button>
+            <button class="win-btn" data-action="maximize">[]</button>
+            <button class="win-btn" data-action="close">X</button>
+          </div>
+        </div>
+        <div class="menu-bar">
+          <span>文件</span>
+          <span>编辑</span>
+          <span>格式</span>
+          <span>查看</span>
+          <span>帮助</span>
+        </div>
+        <div class="doc-body">
+          <div class="doc-content markdown"></div>
+        </div>
+      </div>
+    </template>
+
+    <div class="taskbar">
+      <div class="start-button">开始</div>
+      <div class="taskbar-buttons">
+        <div class="taskbar-btn">IE 浏览器</div>
+        <div class="taskbar-btn">Outlook</div>
+        <div class="taskbar-btn">资源管理器</div>
+      </div>
+      <div class="taskbar-windows" id="taskbar-windows"></div>
+      <div class="taskbar-font">
+        <label for="font-select">字体</label>
+        <select id="font-select">
+          <option value="Tahoma">Tahoma</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
+        </select>
+        <input id="font-input" type="text" placeholder="自定义字体" />
+        <button id="font-apply">应用</button>
+      </div>
+      <div class="taskbar-clock" id="taskbar-clock"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
