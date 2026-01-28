@@ -76,6 +76,17 @@ function findNodeByName(node, target) {
   return null;
 }
 
+function findNodeByPath(node, targetPath) {
+  if (!node) return null;
+  if (node.type === "file" && node.path === targetPath) return node;
+  if (!node.children) return null;
+  for (const child of node.children) {
+    const found = findNodeByPath(child, targetPath);
+    if (found) return found;
+  }
+  return null;
+}
+
 function buildTree(node, container, depth = 0) {
   if (!node || !node.children) return;
   for (const child of node.children) {
@@ -125,14 +136,15 @@ async function openDocument(node) {
     const response = await fetch(node.path);
     const text = await response.text();
     const html = markdownToHtml(text);
-    const docWindow = createDocWindow(node.name, html);
+    const docWindow = createDocWindow(node.name, html, node.path);
     createTaskButton(docWindow);
     setTaskButtonTitle(docWindow, node.name);
     openWindow(docWindow);
   } catch (error) {
     const docWindow = createDocWindow(
       "错误",
-      "<p>无法加载 Markdown 文件。</p>"
+      "<p>无法加载 Markdown 文件。</p>",
+      node.path
     );
     createTaskButton(docWindow);
     openWindow(docWindow);
@@ -287,16 +299,35 @@ function removeTaskButton(windowEl) {
   }
 }
 
-function createDocWindow(title, html) {
+function createDocWindow(title, html, path) {
   if (!docTemplate) return null;
   const node = docTemplate.content.firstElementChild.cloneNode(true);
   const windowId = `doc-viewer-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   node.id = windowId;
   node.dataset.dynamic = "true";
+  if (path) {
+    node.dataset.docPath = path;
+  }
   const titleEl = node.querySelector(".doc-title");
   const contentEl = node.querySelector(".doc-content");
   if (titleEl) titleEl.textContent = title || "文档";
   if (contentEl) contentEl.innerHTML = html || "";
+  const shareBtn = node.querySelector("[data-action='share']");
+  if (shareBtn) {
+    shareBtn.addEventListener("click", () => {
+      const sharePath = node.dataset.docPath || "";
+      if (!sharePath) return;
+      const shareUrl = buildShareUrl(sharePath);
+      copyToClipboard(shareUrl).then((ok) => {
+        if (ok) {
+          shareBtn.textContent = "已复制";
+          setTimeout(() => {
+            shareBtn.textContent = "复制链接";
+          }, 1200);
+        }
+      });
+    });
+  }
   document.body.appendChild(node);
   applyWindowBehavior(node);
   return node;
@@ -411,6 +442,54 @@ function bindToolbarActions() {
   });
 }
 
+function buildShareUrl(docPath) {
+  const base = `${window.location.origin}${window.location.pathname}`;
+  return `${base}?doc=${encodeURIComponent(docPath)}`;
+}
+
+async function copyToClipboard(text) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (error) {
+    return fallbackCopy(text);
+  }
+  return fallbackCopy(text);
+}
+
+function fallbackCopy(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch (error) {
+    ok = false;
+  }
+  document.body.removeChild(textarea);
+  return ok;
+}
+
+function handleAutoOpen() {
+  const params = new URLSearchParams(window.location.search);
+  const docParam = params.get("doc");
+  if (!docParam) return;
+  const node = state.tree ? findNodeByPath(state.tree, docParam) : null;
+  if (node) {
+    openDocument(node);
+    return;
+  }
+  const name = docParam.split("/").pop() || "文档";
+  openDocument({ type: "file", name, path: docParam });
+}
+
 fontApply.addEventListener("click", () => {
   const custom = fontInput.value.trim();
   if (custom) {
@@ -432,4 +511,4 @@ document.querySelectorAll(".window").forEach((windowEl) => {
   applyWindowBehavior(windowEl);
 });
 bindToolbarActions();
-loadTree();
+loadTree().then(handleAutoOpen);

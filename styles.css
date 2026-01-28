@@ -168,6 +168,16 @@ body {
   gap: 14px;
 }
 
+.share-btn {
+  margin-left: auto;
+  padding: 2px 8px;
+  font-size: 12px;
+  border: 1px solid #8d8d8d;
+  background: #f4f4f4;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
 .toolbar .tool {
   padding: 2px 8px;
   background: #f8f8f8;
