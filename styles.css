@@ -74,20 +74,28 @@ body {
 }
 
 .icon-file {
-  background: linear-gradient(145deg, #e7f1ff, #b9cff5);
+  background: linear-gradient(145deg, #f7fbff, #c7daf8);
   border: 1px solid #5c7bb3;
+  overflow: hidden;
 }
 
 .icon-file::before {
   content: "";
   position: absolute;
-  top: 6px;
-  left: 8px;
-  right: 8px;
-  height: 2px;
-  background: rgba(60, 90, 140, 0.5);
-  box-shadow: 0 6px 0 rgba(60, 90, 140, 0.4),
-    0 12px 0 rgba(60, 90, 140, 0.3);
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0 28px, rgba(255, 255, 255, 0.85) 28px);
+}
+
+.icon-file::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #c7daf8 0%, #eaf3ff 60%, #ffffff 60%);
+  border-left: 1px solid rgba(92, 123, 179, 0.6);
+  border-bottom: 1px solid rgba(92, 123, 179, 0.6);
 }
 
 .icon-label {

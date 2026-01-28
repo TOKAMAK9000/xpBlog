@@ -141,6 +141,7 @@ async function openDocument(node) {
     createTaskButton(docWindow);
     setTaskButtonTitle(docWindow, node.name);
     openWindow(docWindow);
+    highlightDocWindow(docWindow);
   } catch (error) {
     const docWindow = createDocWindow(
       "错误",
@@ -158,6 +159,7 @@ function markdownToHtml(md) {
   let inList = false;
   let inCode = false;
   let codeBuffer = [];
+  let codeLang = "";
   let paraBuffer = [];
 
   const flushParagraph = () => {
@@ -175,13 +177,19 @@ function markdownToHtml(md) {
   for (const line of lines) {
     if (line.startsWith("```")) {
       if (inCode) {
-        html += `<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>`;
+        const safeLang = codeLang.replace(/[^a-zA-Z0-9_-]/g, "");
+        const langClass = safeLang ? ` class="language-${safeLang}"` : "";
+        html += `<pre><code${langClass}>${escapeHtml(
+          codeBuffer.join("\n")
+        )}</code></pre>`;
         codeBuffer = [];
         inCode = false;
+        codeLang = "";
       } else {
         flushParagraph();
         flushList();
         inCode = true;
+        codeLang = line.slice(3).trim();
       }
       continue;
     }
@@ -332,6 +340,16 @@ function createDocWindow(title, html, path) {
   document.body.appendChild(node);
   applyWindowBehavior(node);
   return node;
+}
+
+function highlightDocWindow(windowEl) {
+  if (!windowEl || !window.hljs) return;
+  const blocks = windowEl.querySelectorAll(".doc-content pre code");
+  blocks.forEach((block) => {
+    if (!block.classList.contains("hljs")) {
+      window.hljs.highlightElement(block);
+    }
+  });
 }
 
 function renderDesktopIcons(rootNode) {
