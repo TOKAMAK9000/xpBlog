@@ -1,58 +1,15 @@
-﻿{
+{
   "name": "桌面",
   "type": "folder",
   "children": [
     {
-      "name": "我的文档",
+      "name": "系统  模块设计记录",
       "type": "folder",
       "children": [
         {
-          "name": "Readme.md",
+          "name": "模板参数解析设计方案.md",
           "type": "file",
-          "path": "content/readme.md"
-        },
-        {
-          "name": "About.md",
-          "type": "file",
-          "path": "content/about.md"
-        }
-      ]
-    },
-    {
-      "name": "项目",
-      "type": "folder",
-      "children": [
-        {
-          "name": "Blog-UI.md",
-          "type": "file",
-          "path": "content/projects/blog-ui.md"
-        }
-      ]
-    },
-    {
-      "name": "文章",
-      "type": "folder",
-      "children": [
-        {
-          "name": "示例",
-          "type": "folder",
-          "children": [
-            {
-              "name": "随笔.md",
-              "type": "file",
-              "path": "content/posts/notes/notes.md"
-            }
-          ]
-        },
-        {
-          "name": "第一篇.md",
-          "type": "file",
-          "path": "content/posts/first-post.md"
-        },
-        {
-          "name": "第二篇.md",
-          "type": "file",
-          "path": "content/posts/second-post.md"
+          "path": "content/系统  模块设计记录/模板参数解析设计方案.md"
         }
       ]
     }

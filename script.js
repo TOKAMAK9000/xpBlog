@@ -343,6 +343,8 @@ function bindDesktopIcons() {
         const node = findNodeByName(state.tree, target);
         if (node) {
           renderFolder(node);
+        } else {
+          renderFolder(state.tree);
         }
       }
     });
