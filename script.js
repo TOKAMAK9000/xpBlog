@@ -10,6 +10,7 @@ const fontApply = document.getElementById("font-apply");
 const taskbarClock = document.getElementById("taskbar-clock");
 const taskbarWindows = document.getElementById("taskbar-windows");
 const explorerToolbar = document.querySelector("#file-explorer .toolbar");
+const desktopIcons = document.getElementById("desktop-icons");
 
 const state = {
   tree: null,
@@ -333,21 +334,32 @@ function createDocWindow(title, html, path) {
   return node;
 }
 
-function bindDesktopIcons() {
-  document.querySelectorAll(".desktop-icon").forEach((icon) => {
+function renderDesktopIcons(rootNode) {
+  if (!desktopIcons) return;
+  desktopIcons.innerHTML = "";
+  const items = rootNode?.children || [];
+  if (!items.length) return;
+  items.forEach((item) => {
+    const icon = document.createElement("div");
+    icon.className = "desktop-icon";
+    icon.innerHTML =
+      '<div class="icon"></div><div class="icon-label"></div>';
+    const iconBox = icon.querySelector(".icon");
+    if (iconBox) {
+      iconBox.classList.add(item.type === "folder" ? "icon-folder" : "icon-file");
+    }
+    const label = icon.querySelector(".icon-label");
+    if (label) label.textContent = item.name;
     icon.addEventListener("click", () => {
       openWindow(explorerWindow);
       createTaskButton(explorerWindow);
-      const target = icon.dataset.node;
-      if (state.tree) {
-        const node = findNodeByName(state.tree, target);
-        if (node) {
-          renderFolder(node);
-        } else {
-          renderFolder(state.tree);
-        }
+      if (item.type === "folder") {
+        renderFolder(item);
+      } else {
+        openDocument(item);
       }
     });
+    desktopIcons.appendChild(icon);
   });
 }
 
@@ -508,9 +520,11 @@ fontSelect.addEventListener("change", () => {
 updateClock();
 setInterval(updateClock, 1000 * 30);
 
-bindDesktopIcons();
 document.querySelectorAll(".window").forEach((windowEl) => {
   applyWindowBehavior(windowEl);
 });
 bindToolbarActions();
-loadTree().then(handleAutoOpen);
+loadTree().then(() => {
+  renderDesktopIcons(state.tree);
+  handleAutoOpen();
+});
